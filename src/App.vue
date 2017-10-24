@@ -29,7 +29,7 @@
           <div class="error-message" v-text="loginError"></div>
           <input type="text" name="user" placeholder="Email or Username" v-model="loginUser">
           <input type="password" name="password" placeholder="Password" v-model="loginPassword">
-          <input type="submit" v-on:click="submit('loginReq', $event)" v-model="loginSubmit" id="loginSubmit" :class="{disabled: !form_login.submitted}">
+          <input type="submit" v-on:click="submit('loginReq', $event)" v-model="loginSubmit" id="loginSubmit" :class="{disabled: !form_login.loggedIn}">
           <div class="links"> <a href="" v-on:click="flip('password', $event)">Forgot your password?</a>
           </div>
         </div>
@@ -46,7 +46,7 @@
                 active: null,
 
                 form_login: {
-                    sumbitted: false
+                    loggedIn: false
                 },
 
                 // Submit button text
@@ -113,7 +113,6 @@
                         window.open('http://www.communauto.com/auto-mobile/sinscrire_en.html', '_blank');
                         break;
                     case 'loginReq':
-                        this.form_login.sumbitted = true;
                         this.loginSubmit = 'Logging In...';
                         this.loggedInAction(this.loginAction);
                         break;
@@ -121,7 +120,7 @@
 
                 // TODO: submit our `data` variable
             },
-            loginReq: function (callback) {
+            loginAttempt: function (callback) {
                 var that = this;
                 $.ajax({
 
@@ -140,7 +139,7 @@
                         if(data.data[0] && data.data[0].ProviderNo === ''){
                             that.loginError = "Invalid Credentials";
                         } else {
-                            that.userData = data.data[0];
+                            that.loginAction()
                         }
                     }
                 });
@@ -162,10 +161,10 @@
                         var ProviderNo = data.data[0].ProviderNo;
                         var Access = data.data[0].Access;
 
-                        // they were not signed in already so sign them in
+                        // they were not signed in already so ask them to sign in
 
                         if (isNaN(CustomerID)) {
-                            that.loginReq();
+                            that.loginAttempt();
                         }
                         else {
                             action(data);
@@ -174,8 +173,7 @@
                 });
             },
             loginAction: function(data){
-                //they were signed in already
-                this.loginError = "You were already signed in";
+                this.form_login.loggedIn = true;
                 this.userData = data.data[0];
 
                 //show main app
@@ -366,9 +364,6 @@
 
                             //get address
 
-                            //BookLSI(closestCar.Id, closestCar.Name, closestCar.ModelName.toLowerCase(), closestCar.Immat, '' , closestCar.EnergyLevel, '' , closestCar.Position.Lat, closestCar.Position.Lon);
-                            that.BookLSI(closestCar.Id);
-
                             alert("Reservation Successful!");
 
                             that.reserveCar(closestCar);
@@ -381,21 +376,23 @@
             },
 
             reserveCar: function(car){
-                console.log(car);
+                this.loggedInAction(this.bookLSI(car.Id));
             },
 
-            BookLSI: function(vin){
-                $.ajax({
-                    url: 'https://www.reservauto.net/WCF/LSI/LSIBookingService.asmx/CreateBooking?Callback=?',
-                    type: 'GET',
-                    data: {CustomerID: "\"\"", "VehicleID": "\"" + vin + "\""},
-                    dataType: 'jsonp',
-                    crossdomain: true,
-                    contentType: 'application/json; charset=utf-8',
-                    success: function(data){
-                        //TODO success action
-                    }
-                });
+            bookLSI: function(vin){
+                return function(){
+                    $.ajax({
+                        url: 'https://www.reservauto.net/WCF/LSI/LSIBookingService.asmx/CreateBooking?Callback=?',
+                        type: 'GET',
+                        data: {CustomerID: "\"\"", "VehicleID": "\"" + vin + "\""},
+                        dataType: 'jsonp',
+                        crossdomain: true,
+                        contentType: 'application/json; charset=utf-8',
+                        success: function(data){
+                            //TODO success action
+                        }
+                    });
+                }
             }
         }
     }

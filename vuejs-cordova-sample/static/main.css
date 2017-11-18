@@ -1,0 +1,15 @@
+main{
+  padding-top: 64px;
+}
+
+.middle-centered {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  min-height: inherit;
+}
+
+.text-center{
+  text-align: center;
+}

@@ -436,7 +436,7 @@ var CI = (function(){
         showMyPerimeter: showMyPerimeter,
         haversine_distance: haversine_distance,
         coordToAddress: coordToAddress,
-        fetchValidCars: fetchValidCars,
+        checkValidCars: fetchValidCars,
         closestCar: closestCar,
         reserveCar: reserveCar
     }

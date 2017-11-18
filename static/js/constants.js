@@ -1,0 +1,1 @@
+export const WALK_M_PER_MIN = 60;

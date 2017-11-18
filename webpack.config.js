@@ -1,4 +1,4 @@
-var path = require('path')
+var path = require('path');
 var webpack = require('webpack');
 
 
@@ -9,16 +9,18 @@ module.exports = {
     publicPath: '/dist/',
     filename: 'build.js'
   },
-    plugins: [
-        new webpack.ProvidePlugin({
-            $: "jquery",
-            jQuery: "jquery"
-        }),
-        new webpack.ProvidePlugin({
-            underscore: "underscore",
-            _:"underscore"
-        }),
-    ],
+  plugins: [
+      new webpack.ProvidePlugin({
+          $: "jquery",
+          jQuery: "jquery",
+          "window.jQuery": "jquery",
+          Hammer: "hammerjs/hammer"
+      }),
+      new webpack.ProvidePlugin({
+          underscore: "underscore",
+          _:"underscore"
+      }),
+  ],
   module: {
     rules: [
       {
@@ -41,6 +43,13 @@ module.exports = {
         options: {
           name: '[name].[ext]?[hash]'
         }
+      },
+      {
+          test: /\.(css|min.css)$/,
+          loader: 'file-loader',
+          options: {
+              name: '[name].[ext]?[hash]'
+          }
       }
     ]
   },
@@ -51,7 +60,8 @@ module.exports = {
   },
   devServer: {
     historyApiFallback: true,
-    noInfo: true
+    noInfo: true,
+      host : '192.168.1.3'
   },
   performance: {
     hints: false

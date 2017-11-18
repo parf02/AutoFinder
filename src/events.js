@@ -8,7 +8,7 @@ CI.events = (function(){
             CI.showMyPerimeter(myDistance);
         });
         $('#myListener').on('click', function(){
-            CI.fetchValidCars();
+            CI.checkValidCars();
         });
     }
 

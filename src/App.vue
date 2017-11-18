@@ -2,9 +2,9 @@
   <div style="height:100%;">
     <div class="fill-height-or-more">
       <nav>
-        <div class="nav-wrapper">
-          <a href="#!" class="brand-logo">AutoFinder</a>
-          <a href="#" data-activates="slide-out" class="button-collapse"><i class="material-icons">menu</i></a>
+        <div class="nav-wrapper blue-grey">
+          <a href="#!" class="brand-logo center">AutoFinder</a>
+          <a href="#" data-activates="slide-out" class=" show-on-large button-collapse"><i class="material-icons">menu</i></a>
           <ul id="slide-out" class="side-nav">
             <li>
               <div class="user-view">
@@ -29,22 +29,36 @@
         </div>
       </nav>
       <div id="infoCntr">
-        <places
-                v-model="form.country.label"
-                placeholder="Starting Address (optional)"
-                @change="val => { if(val.latlng !== undefined){form.country.data = val; updateLocation(form.country.data.latlng);}}"
-                :options="{ countries: ['CA'], appId:'plYQC72L7LQ5', apiKey: '4c671e357b012ca26e62ac59b3299177' }">
-        </places>
-        <div>
-          <span>Max walking distance ({{ myTimeDistance }} min): </span>
-          <p class="range-field">
-          <input id="myDistance" type="range" min="1" max="30" v-model="myTimeDistance">
-          </p>
+        <div id="info">
+          <ul class="collapsible" data-collapsible="accordion">
+            <li>
+              <div class="collapsible-header"><i class="material-icons">place</i>Starting Address (optional)</div>
+              <div class="collapsible-body">
+                <places
+                      v-model="form.country.label"
+                      placeholder="Starting Address (optional)"
+                      @change="val => { if(val.latlng !== undefined){form.country.data = val; updateLocation(form.country.data.latlng);}}"
+                      :options="{ countries: ['CA'], appId:'plYQC72L7LQ5', apiKey: '4c671e357b012ca26e62ac59b3299177' }">
+                </places>
+              </div>
+            </li>
+            <li>
+              <div class="collapsible-header active"><i class="material-icons">directions_run</i>Max Distance</div>
+              <div class="collapsible-body">
+                <div>
+                  <span>Max walking distance ({{ myTimeDistance }} min): </span>
+                  <p class="range-field">
+                    <input id="myDistance" type="range" min="1" max="30" v-model="myTimeDistance">
+                  </p>
+                </div>
+              </div>
+            </li>
+          </ul>
+          <div>
+            <button id="myListener" class="btn btn-block" v-bind:class="{'green lighten-1': monitorLoop === null, 'red lighten-1': monitorLoop !== null}" v-on:click="monitorBtnPress()" title="Monitor Area" v-text="monitorButtonText"></button>
+          </div>
+          <input type="checkbox" id="showCars" v-model="showCars" title="Show communauto cars"/>
         </div>
-        <div>
-          <button id="myListener" class="btn btn-block" v-bind:class="{'green lighten-1': monitorLoop === null, 'red lighten-1': monitorLoop !== null}" v-on:click="monitor()" title="Monitor Area" v-text="monitorButtonText"></button>
-        </div>
-        <input type="checkbox" id="showCars" v-model="showCars" title="Show communauto cars"/>
       </div>
       <div id="mapCntr">
         <div v-if="loaderActive" id="loaderCntr">
@@ -329,6 +343,8 @@
                 onOpen: function(el) {}, // A function to be called when sideNav is opened
                 onClose: function(el) {}, // A function to be called when sideNav is closed
              });
+
+            $('.collapsible').collapsible();
 
             document.getElementById('mapCntr').style.height = window.innerHeight + "px";
         },
@@ -700,7 +716,7 @@
                 return 1000*12742 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
             },
 
-            monitor: function(){
+            monitorBtnPress: function(){
                 if(this.monitorLoop !== null){
                     this.stopMonitor();
                 } else {
@@ -746,12 +762,12 @@
 
                                     if (that.haversine_distance(carPos, that.mapData.myLocation) <= that.mapData.myDistance){
                                         that.validCars.push(item);
-                                        new google.maps.Marker({
-                                            position: carPos,
-                                            map: that.mapData.GMaps,
-                                            draggable:false,
-                                            title:' ' + that.haversine_distance(carPos, that.mapData.myLocation)
-                                        });
+//                                        new google.maps.Marker({
+//                                            position: carPos,
+//                                            map: that.mapData.GMaps,
+//                                            draggable:false,
+//                                            title:' ' + that.haversine_distance(carPos, that.mapData.myLocation)
+//                                        });
                                     }
                                 }
                             })
@@ -767,9 +783,11 @@
 
                             //get address
 
-                            alert("Reservation Successful!");
-
-                            that.reserveCar(closestCar, that.showReservation);
+                            that.reserveCar(closestCar, function(){
+                                that.showReservation();
+                                that.refreshValidCars();
+                                that.checkBookings();
+                            });
                         } else{
                             console.log("Currently no available cars in selected perimeter!");
                             that.monitorLoop = setTimeout(that.checkValidCars, 3000);
@@ -1159,6 +1177,15 @@
   #infoCntr{
     height: 40%;
     padding: 10px;
+    width:100%;
+    display: inline-block;
+    text-align: center;
+    background-color: ;
+  }
+
+  #info{
+    margin: 0 auto;
+    max-width: 500px;
   }
 
   #mapCntr{
@@ -1227,6 +1254,20 @@
 
   .background img{
     width: 100%;
+  }
+
+  .collapsible-body{
+    background-color: white;
+  }
+  .ap-footer{
+    display: none;
+  }
+  .ap-suggestion{
+    text-align: left;
+  }
+
+  nav .brand-logo {
+    font-size: 1.8rem;
   }
 
 </style>

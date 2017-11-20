@@ -9,9 +9,9 @@
             <li>
               <div class="user-view">
                 <div class="background">
-                  <img src="../static/background-sidebar.jpg">
+                  <img src=require('./assets/background-sidebar.jpg')>
                 </div>
-                <a href="#!user"><img class="circle" src="../static/person.png"></a>
+                <a href="#!user"><img class="circle" src=require('./assets/person.png')></a>
                 <a href="#!name"><span class="white-text name">{{ displayNameUser }}</span></a>
                 <a href="#!email"><span class="white-text email">City: Montreal</span></a>
                 <a v-on:click="logout()"><span style="border: 2px solid white;padding: 4px;"><div style="display:inline-block;" class="border white-text email">Logout</div></span></a>
@@ -203,9 +203,11 @@
 </template>
 
 <script>
-    import RatchetJS from '../static/js/materialize.js';
+    require('./assets/js/materialize.js');
     import Places from 'vue-places';
-    import {WALK_M_PER_MIN} from '../static/js/constants.js';
+    require('./assets/js/constants.js');
+    require('./assets/css/materialize.css');
+    require('./assets/js/materialize.js');
 
     export default {
         name: 'app',

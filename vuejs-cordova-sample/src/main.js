@@ -3,11 +3,11 @@
 import Vue from 'vue'
 import App from './App'
 import router from './router'
+    // require('./assets/css/materialize.css');
+    // require('./assets/js/materialize.js');
 
 Vue.config.productionTip = true;
 
-// Vuetify
-require('vuetify/dist/vuetify.min.css');
 import Vuetify from 'vuetify'
 Vue.use(Vuetify);
 

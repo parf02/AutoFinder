@@ -47,7 +47,7 @@
               <div class="collapsible-body">
                 <div>
                   <span>Max walking distance ({{ myTimeDistance }} min): </span>
-                  <p class="range-field">
+                  <p class="range-field-custom">
                     <input id="myDistance" type="range" min="1" max="30" v-model="myTimeDistance">
                   </p>
                 </div>
@@ -1303,5 +1303,92 @@
   nav .brand-logo {
     font-size: 1.8rem;
   }
+
+  input[type=range] {
+  -webkit-appearance: none;
+  width: 100%;
+  margin: 14.8px 0;
+}
+input[type=range]:focus {
+  outline: none;
+}
+input[type=range]::-webkit-slider-runnable-track {
+  width: 100%;
+  height: 4.4px;
+  cursor: pointer;
+  box-shadow: 0px 0px 0px rgba(0, 0, 0, 0), 0px 0px 0px rgba(13, 13, 13, 0);
+  background: #b2b2b2;
+  border-radius: 1.3px;
+  border: 0.2px solid #000001;
+}
+input[type=range]::-webkit-slider-thumb {
+  box-shadow: 0px 0px 1px #000000, 0px 0px 0px #0d0d0d;
+  border: 0px solid #000000;
+  height: 34px;
+  width: 15px;
+  border-radius: 50px;
+  background: #00a98b;
+  cursor: pointer;
+  -webkit-appearance: none;
+  margin-top: -15px;
+}
+input[type=range]:focus::-webkit-slider-runnable-track {
+  background: #cecece;
+}
+input[type=range]::-moz-range-track {
+  width: 100%;
+  height: 4.4px;
+  cursor: pointer;
+  box-shadow: 0px 0px 0px rgba(0, 0, 0, 0), 0px 0px 0px rgba(13, 13, 13, 0);
+  background: #b2b2b2;
+  border-radius: 1.3px;
+  border: 0.2px solid #000001;
+}
+input[type=range]::-moz-range-thumb {
+  box-shadow: 0px 0px 1px #000000, 0px 0px 0px #0d0d0d;
+  border: 0px solid #000000;
+  height: 34px;
+  width: 15px;
+  border-radius: 50px;
+  background: #00a98b;
+  cursor: pointer;
+}
+input[type=range]::-ms-track {
+  width: 100%;
+  height: 4.4px;
+  cursor: pointer;
+  background: transparent;
+  border-color: transparent;
+  color: transparent;
+}
+input[type=range]::-ms-fill-lower {
+  background: #969696;
+  border: 0.2px solid #000001;
+  border-radius: 2.6px;
+  box-shadow: 0px 0px 0px rgba(0, 0, 0, 0), 0px 0px 0px rgba(13, 13, 13, 0);
+}
+input[type=range]::-ms-fill-upper {
+  background: #b2b2b2;
+  border: 0.2px solid #000001;
+  border-radius: 2.6px;
+  box-shadow: 0px 0px 0px rgba(0, 0, 0, 0), 0px 0px 0px rgba(13, 13, 13, 0);
+}
+input[type=range]::-ms-thumb {
+  box-shadow: 0px 0px 1px #000000, 0px 0px 0px #0d0d0d;
+  border: 0px solid #000000;
+  height: 34px;
+  width: 15px;
+  border-radius: 50px;
+  background: #00a98b;
+  cursor: pointer;
+  height: 4.4px;
+}
+input[type=range]:focus::-ms-fill-lower {
+  background: #b2b2b2;
+}
+input[type=range]:focus::-ms-fill-upper {
+  background: #cecece;
+}
+
 
 </style>

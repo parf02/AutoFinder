@@ -14,3 +14,6 @@ npm run dev
 # build for production with minification
 npm run build
 ```
+## Built With
+
+![build with these technologies](https://i.imgur.com/7j7xqB2.png)

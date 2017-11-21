@@ -333,10 +333,14 @@
         mounted() {
             this.loadLoginCreds();
             this.loggedInAction(this.autoSignInAttempt, this.loginSuccessAction);
-            $('.modal').modal();
-            $('#modalError').modal({
+
+            var modals = document.querySelector('.modal');
+            var errorModal = document.querySelector('#modalError');
+            var instance = new M.Modal(modals, {});
+            errorModal.modal({
                     dismissible: false,
             });
+
             $('.button-collapse').sideNav({
                 menuWidth: 300, // Default is 300
                 edge: 'left', // Choose the horizontal origin

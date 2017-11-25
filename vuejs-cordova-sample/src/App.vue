@@ -4,8 +4,7 @@
       <nav>
         <div class="nav-wrapper blue-grey">
           <a href="#!" class="brand-logo center">AutoFinder</a>
-          <a href="#" data-activates="slide-out" class=" show-on-large button-collapse"><i class="material-icons">menu</i></a>
-          <ul id="slide-out" class="side-nav">
+          <a href="#" data-target="slide-out" class="sidenav-trigger show-on-large button-collapse"><i class="material-icons">menu</i></a>          <ul id="slide-out" class="sidenav">
             <li>
               <div class="user-view">
                 <div class="background">
@@ -14,7 +13,7 @@
                 <a href="#!user"><img class="circle" src="../static/person.png"></a>
                 <a href="#!name"><span class="white-text name">{{ displayNameUser }}</span></a>
                 <a href="#!email"><span class="white-text email">City: Montreal</span></a>
-                <a v-on:click="logout()"><span style="border: 2px solid white;padding: 4px;"><div style="display:inline-block;" class="border white-text email">Logout</div></span></a>
+                <a class="sidenav-close" v-on:click="logout()"><span style="border: 2px solid white;padding: 4px;"><div style="display:inline-block;" class="border white-text email">Logout</div></span></a>
               </div>
             </li>
             <!--<li><a class="subheader">Options</a></li>-->
@@ -22,9 +21,9 @@
             <!--<li><a href="#!"><i class="material-icons">location_searching</i>Monitor Options</a></li>-->
             <!--<li><div class="divider"></div></li>-->
             <li><a class="subheader">How To Use</a></li>
-            <li v-on:click="showHelp('perimeter')"><a class="waves-effect" href="#!">Monitor Area</a></li>
-            <li v-on:click="showHelp('reservations')"><a class="waves-effect" href="#!">Reservations</a></li>
-            <li v-on:click="showHelp('faq')"><a class="waves-effect" href="#!">FAQ</a></li>
+            <li v-on:click="showHelp('perimeter')"><a class="waves-effect sidenav-close" href="#!">Monitor Area</a></li>
+            <li v-on:click="showHelp('reservations')"><a class="waves-effect sidenav-close" href="#!">Reservations</a></li>
+            <li v-on:click="showHelp('faq')"><a class="waves-effect sidenav-close" href="#!">FAQ</a></li>
           </ul>
         </div>
       </nav>
@@ -42,8 +41,8 @@
                 </places>
               </div>
             </li>
-            <li>
-              <div class="collapsible-header active"><i class="material-icons">directions_run</i>Max Distance</div>
+            <li class="active">
+              <div class="collapsible-header"><i class="material-icons">directions_run</i>Max Distance</div>
               <div class="collapsible-body">
                 <div>
                   <span>Max walking distance ({{ myTimeDistance }} min): </span>
@@ -98,7 +97,7 @@
           <div class="error-message" v-text="loginError"></div>
           <input type="text" name="user" placeholder="Email or Username" v-model="loginUser">
           <input type="password" name="password" placeholder="Password" v-model="loginPassword">
-          <input type="submit" v-on:click="submit('loginReq', $event)" v-model="loginSubmit" id="loginSubmit" :class="{disabled: form_login.loggedIn}">
+          <input type="submit" v-on:click="submit('loginReq', $event)" v-model="loginSubmit" id="loginSubmit">
           <div class="links"> <a href="" v-on:click="flip('password', $event)">Forgot your password?</a>
           </div>
         </div>
@@ -188,8 +187,8 @@
         </div>
       </div>
     </div>
-
-    <div v-if="form_login.loggedIn" class="fixed-action-btn toolbar left">
+<!-- v-if="form_login.loggedIn" -->
+    <div class="fixed-action-btn toolbar left" :class="{invisible: !form_login.loggedIn}">
       <a class="btn-floating btn-large red">
         <i class="large material-icons">map</i>
       </a>
@@ -203,7 +202,7 @@
 </template>
 
 <script>
-    var Materialize = require('../static/js/materialize.js');
+    var M = require('../static/js/materialize.js');
     var MaterializeCSS = require('../static/css/materialize.css');
     import Places from 'vue-places';
     import {WALK_M_PER_MIN} from '../static/js/constants.js';
@@ -218,7 +217,7 @@
                 active: null,
 
                 form_login: {
-                    loggedIn: false
+                    loggedIn: true
                 },
 
                 // Submit button text
@@ -334,25 +333,25 @@
             this.loadLoginCreds();
             this.loggedInAction(this.autoSignInAttempt, this.loginSuccessAction);
 
-            var modals = document.querySelector('.modal');
+            var modals = document.querySelectorAll('.modal');
             var errorModal = document.querySelector('#modalError');
-            var instance = new M.Modal(modals, {});
-            errorModal.modal({
-                    dismissible: false,
-            });
+            for (var i = 0, len = modals.length; i < len; i++) {
+              new M.Modal(modals[i], {});
+            }
+            // errorModal.modal({
+            //         dismissible: false,
+            // });
 
-            $('.button-collapse').sideNav({
-                menuWidth: 300, // Default is 300
-                edge: 'left', // Choose the horizontal origin
-                closeOnClick: true, // Closes side-nav on <a> clicks, useful for Angular/Meteor
-                draggable: true, // Choose whether you can drag to open on touch screens,
-                onOpen: function(el) {}, // A function to be called when sideNav is opened
-                onClose: function(el) {}, // A function to be called when sideNav is closed
-             });
+            var sidebarInstance = new M.Sidenav(document.querySelector('.sidenav'), {});
 
-            $('.collapsible').collapsible();
+            var collapsibleInstance = new M.Collapsible(document.querySelector('.collapsible'));
 
             document.getElementById('mapCntr').style.height = window.innerHeight + "px";
+
+            var actionButtonInstance = 
+              new M.FloatingActionButton(document.querySelector('.fixed-action-btn'), {toolbarEnabled: true});
+
+            console.log("mounted");
         },
         methods: {
             open: function (which, e) {
@@ -899,7 +898,7 @@
                                         $("button#manualReserve").on("click", function(e) {
                                             if(that.pendingCar.Id === item.Id){that.showReservation();return;}
                                             if(that.pendingCar.Id !== null){
-                                                Materialize.toast('Only 1 reservation at a time is possible.', 4000);// 4000 is the duration of the toast
+                                                M.toast({html:'Only 1 reservation at a time is possible.', displayLength:4000});// 4000 is the duration of the toast
                                                 return;
                                             }
                                             var button = this;
@@ -947,7 +946,7 @@
 
             reserveCar: function(car, successCB){
                 if(this.pendingCar.Id!==null){
-                    Materialize.toast('Only 1 reservation at a time is possible.', 4000);// 4000 is the duration of the toast
+                    M.toast({html:'Only 1 reservation at a time is possible.', displayLength:4000});// 4000 is the duration of the toast
                     return;
                 }
                 this.loggedInAction(this.loginAttempt,this.bookCar(car, successCB));
@@ -1061,7 +1060,7 @@
 
                         that.refreshValidCars();
 
-                        Materialize.toast('Reservation Cancelled', 4000) // 4000 is the duration of the toast
+                        M.toast({html:'Reservation Cancelled', displayLength:4000}) // 4000 is the duration of the toast
                     }
                 });
             },
@@ -1270,9 +1269,6 @@
   #manualReserve{
     margin-top: 8px;
   }
-    .fixed-action-btn{
-      left: 24px;
-    }
 
   #loaderCntr{
     height: 0px;
@@ -1390,5 +1386,10 @@ input[type=range]:focus::-ms-fill-upper {
   background: #cecece;
 }
 
-
+.toolbar.left{
+  left:30px;
+}
+.invisible{
+  visibility: hidden;
+}
 </style>

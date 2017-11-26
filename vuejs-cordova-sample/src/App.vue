@@ -568,12 +568,29 @@
                 };
 
                 if(!this.mapData.GMaps) {
+
+                    var styles = {
+                      default: null,
+                      hide: [
+                        {
+                          featureType: 'poi',
+                          stylers: [{visibility: 'off'}]
+                        },
+                        {
+                          featureType: 'transit',
+                          elementType: 'labels.icon',
+                          stylers: [{visibility: 'off'}]
+                        }
+                      ]
+                    };
+
                     this.mapData.GMaps = new google.maps.Map(document.getElementById('map'), {
                         center: {
                             lat: initPos.latitude,
                             lng: initPos.longitude
                         },
-                        zoom: 14
+                        zoom: 14,
+                        styles: styles['hide']
                     });
 
                     this.mapData.Geocoder = new google.maps.Geocoder;
@@ -740,7 +757,7 @@
                           hidden: false,
                           bigText: false
                         });
-                        this.monitorLoop = setTimeout(this.checkValidCars, 30000);
+                        this.monitorLoop = setTimeout(this.checkValidCars, 500);
                     }
                 }
             },
@@ -823,7 +840,7 @@
                             });
                         } else{
                             console.log("Currently no available cars in selected perimeter!");
-                            that.monitorLoop = setTimeout(that.checkValidCars, 3000);
+                            that.monitorLoop = setTimeout(that.checkValidCars, 30000);
                         }
                     }
                 });
@@ -909,6 +926,8 @@
                                                 carMarker.setIcon(require('./assets/car-reserved.png'));
                                                 button.innerHTML = "<span>Reserved</span>";
                                                 that.pendingCar.carMarker = carMarker;
+                                            }, function(){
+                                              button.innerHTML = "<span>Not Available</span>";
                                             });
                                         });
                                     });
@@ -944,15 +963,15 @@
                 });
             },
 
-            reserveCar: function(car, successCB){
+            reserveCar: function(car, successCB, failCB){
                 if(this.pendingCar.Id!==null){
                     M.toast({html:'Only 1 reservation at a time is possible.', displayLength:4000});// 4000 is the duration of the toast
                     return;
                 }
-                this.loggedInAction(this.loginAttempt,this.bookCar(car, successCB));
+                this.loggedInAction(this.loginAttempt,this.bookCar(car, successCB, failCB));
             },
 
-            bookCar: function(car, successCB){
+            bookCar: function(car, successCB, failCB){
                 var that = this;
                 return function(){
                     $.ajax({
@@ -964,7 +983,7 @@
                         contentType: 'application/json; charset=utf-8',
                         success: function(data) {
 
-                            if(true){
+                            if(data){
                                 that.stopMonitor();
 
                                 that.mapData.Geocoder.geocode({
@@ -987,6 +1006,9 @@
 
                                     successCB();
                                 });
+                            } else {
+                              M.toast({html:'This Automobile cannot be booked at the moment.', displayLength:4000}) // 4000 is the duration of the toast
+                              if(failCB) failCB();
                             }
                         }
                     });
